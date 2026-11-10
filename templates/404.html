@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page not found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="main-nav">
+        <a href="/">🏠 Home</a>
+        <a href="{{ url_for('activities_page') }}">📅 Planting Calendar</a>
+        <a href="{{ url_for('reminders') }}">⏰ Reminders</a>
+        <a href="{{ url_for('notes') }}">📝 Farmer's Notes</a>
+        <a href="{{ url_for('crops') }}">🌽 Crop Guide</a>
+        <a href="{{ url_for('logout') }}">🚪 Log out ({{ current_username }})</a>
+    </nav>
+
+    <div class="reminder-card">
+        <h3>🌾 Page not found</h3>
+        <p>{{ message }}</p>
+    </div>
+
+</body>
+</html>

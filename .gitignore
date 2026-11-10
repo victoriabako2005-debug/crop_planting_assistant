@@ -1,0 +1,5 @@
+crop_assistant.db
+__pycache__/
+venv/
+.env
+compressed group29 pj.zip

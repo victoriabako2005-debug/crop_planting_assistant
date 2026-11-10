@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer's Notes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="main-nav">
+        <a href="/">🏠 Home</a>
+        <a href="{{ url_for('reminders') }}">⏰ Reminders</a>
+        <a href="{{ url_for('notes') }}" class="active">📝 Farmer's Notes</a>
+        <a href="{{ url_for('activities_page') }}">📅 Planting Calendar</a>
+        <a href="{{ url_for('crops') }}">🌽 Crop Guide</a>
+        <a href="{{ url_for('logout') }}">🚪 Log out ({{ current_username }})</a>
+    </nav>
+
+    <div class="reminder-card">
+        <h3>📝 Farmer's Notes</h3>
+
+        {% if has_calendar %}
+
+            <p><strong>Crop:</strong> {{ crop }}</p>
+
+            <form method="POST" action="{{ url_for('add_note') }}" class="note-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <textarea name="content" rows="3"
+                          placeholder="Write a note, e.g. East field needs more water"
+                          required></textarea>
+                <button type="submit">➕ Save note</button>
+            </form>
+
+            {% if notes %}
+                {% for note in notes %}
+                <div class="note">
+                    <p>{{ note.content }}</p>
+                    <small>{{ note.created_at }}</small>
+                    <form method="POST"
+                          action="{{ url_for('delete_note', note_id=note.id) }}"
+                          onsubmit="return confirm('Delete this note?');">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="delete-btn">🗑️</button>
+                    </form>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No notes yet. Write your first one above.</p>
+            {% endif %}
+
+        {% else %}
+
+            <p>No calendar selected yet. Please generate a planting calendar first.</p>
+
+        {% endif %}
+    </div>
+
+</body>
+</html>

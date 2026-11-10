@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planting Calendar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="main-nav">
+        <a href="/">🏠 Home</a>
+        <a href="{{ url_for('activities_page') }}" class="active">📅 Planting Calendar</a>
+        <a href="{{ url_for('reminders') }}">⏰ Reminders</a>
+        <a href="{{ url_for('notes') }}">📝 Farmer's Notes</a>
+        <a href="{{ url_for('crops') }}">🌽 Crop Guide</a>
+        <a href="{{ url_for('logout') }}">🚪 Log out ({{ current_username }})</a>
+    </nav>
+
+    <div class="reminder-card">
+        <h3>📅 Planting Calendar</h3>
+
+        {% if has_calendar %}
+
+            <p><strong>Crop:</strong> {{ crop }}</p>
+            <p><strong>Planting Date:</strong> {{ planting_date }}</p>
+
+            {% for month, items in months.items() %}
+            <div class="month-block">
+                <h4 class="month-title">{{ month }}</h4>
+
+                {% for activity in items %}
+                <div class="activity-item {{ activity.status }}">
+                    <span class="activity-date">{{ activity.date }}</span>
+                    <span class="activity-name">{{ activity.name }}</span>
+                    <span class="activity-days">Day {{ activity.days_after_planting }}</span>
+                    <span class="activity-status">
+                        {% if activity.status == "done" %}✅ Done
+                        {% elif activity.status == "overdue" %}⚠️ Overdue
+                        {% elif activity.status == "today" %}📌 Today
+                        {% else %}🕒 Upcoming{% endif %}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <p><a href="{{ url_for('reminders') }}">Go to Reminders to mark activities done →</a></p>
+
+        {% else %}
+
+            <p>No calendar yet. Please go to the home page and generate a planting calendar first.</p>
+
+        {% endif %}
+    </div>
+
+</body>
+</html>

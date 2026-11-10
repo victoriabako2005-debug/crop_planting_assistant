@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Crop Planting Calendar Assistant</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>🌱 Crop Planting Assistant</h1>
+        <p>Your farming activities, organized in one place.</p>
+    </header>
+
+    <main class="container">
+
+        <section class="welcome">
+            <h2>Welcome, Farmer!</h2>
+            <p>Plan your crops, track activities, and manage your farming notes.</p>
+        </section>
+       
+        <section class="dashboard">
+
+            {% if due_tasks %}
+            <div class="today-box">
+                <h3>📌 Needs your attention</h3>
+                <ul>
+                    {% for task in due_tasks %}
+                    <li class="{{ task.status }}">
+                        {% if task.status == "overdue" %}⚠️{% else %}📌{% endif %}
+                        <strong>{{ task.name }}</strong> ({{ task.crop }}) · {{ task.date }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ url_for('reminders') }}">Open Reminders to mark them done →</a>
+            </div>
+            {% endif %}
+
+            <div class="card">
+                <h3>🌾 Select Your Crop</h3>
+
+                <form action="/calendar" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <label for="crop">Choose a crop:</label>
+
+                    <select name="crop" id="crop" required>
+                        <option value="">-- Select Crop --</option>
+                        <option value="Maize">Maize</option>
+                        <option value="Rice">Rice</option>
+                        <option value="Beans">Beans</option>
+                        <option value="Tomatoes">Tomatoes</option>
+                        <option value="Cassava">Cassava</option>
+                        <option value="Okra">Okra</option>
+                        <option value="Pepper">Pepper</option>
+                    </select>
+
+                <p id="crop-hint" class="crop-hint"></p>
+
+                <script>
+                    const cropGuide = {{ guide|tojson }};
+                    const cropSelect = document.querySelector("select");
+                    const cropHint = document.getElementById("crop-hint");
+
+                    cropSelect.addEventListener("change", function () {
+                        const info = cropGuide[this.value];
+                        cropHint.textContent = info
+                            ? "🌱 Best planting months: " + info.months + ". Harvest: " + info.harvest + "."
+                            : "";
+                    });
+                </script>
+
+                    <label for="planting_date">Planting date:</label>
+
+                    <input
+                        type="date"
+                        name="planting_date"
+                        id="planting_date"
+                        required
+                    >
+
+                    <button type="submit">Generate Calendar</button>
+
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>📅 Planting Calendar</h3>
+                <p>View your planned farming activities.</p>
+                <a href="/activities" class="button">View Activities</a>
+            </div>
+
+            <div class="card">
+                <h3>🔔 Reminders</h3>
+                <p>Keep track of upcoming farming activities.</p>
+                <a href="/reminders" class="button">View Reminders</a>
+            </div>
+
+            <div class="card">
+                <h3>📝 Farming Notes</h3>
+                <p>Record observations about your crops.</p>
+                <a href="/notes" class="button">Manage Notes</a>
+            </div>
+
+            <div class="card">
+                <h3>🌽 Crop Guide</h3>
+                <p>See the best planting months for each crop.</p>
+                <a href="/crops" class="button">View Crop Guide</a>
+            </div>
+
+        </section>
+
+         <a href="{{ url_for('logout') }}">🚪 Log out ({{ current_username }})</a>
+
+        <footer>
+            <p>Crop Planting Calendar Assistant &copy; 2026</p>
+        </footer>
+
+    </main>
+
+</body>
+</html>

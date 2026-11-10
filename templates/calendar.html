@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Planting Calendar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="main-nav">
+       <a href="/">🏠 Home</a>
+       <a href="{{ url_for('reminders') }}">⏰ Reminders</a>
+       <a href="{{ url_for('notes') }}">📝 Farmer's Notes</a>
+       <a href="{{ url_for('activities_page') }}">📅 Planting Calendar</a>
+       <a href="{{ url_for('crops') }}">🌽 Crop Guide</a>
+       <a href="{{ url_for('logout') }}">🚪 Log out ({{ current_username }})</a>
+    </nav>
+
+    <div class="container">
+        <h1>🌱 Crop Planting Calendar</h1>
+
+        <h2>{{ crop }}</h2>
+
+        <p><strong>Planting Date:</strong> {{ planting_date }}</p>
+
+        <h2>Upcoming Activities</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Activity</th>
+                    <th>Scheduled Date</th>
+                    <th>Days After Planting</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in activities %}
+                <tr>
+                    <td>{{ activity.name }}</td>
+                    <td>{{ activity.date }}</td>
+                    <td>{{ activity.days_after_planting }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <br>
+
+        <a href="/">← Back to Dashboard</a>
+    </div>
+
+</body>
+</html>

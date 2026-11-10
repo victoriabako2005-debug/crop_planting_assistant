@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Reminders</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <nav class="main-nav">
+        <a href="/">🏠 Dashboard</a>
+        <a href="{{ url_for('reminders') }}" class="active">⏰ Reminders</a>
+        <a href="{{ url_for('notes') }}">📝 Farmer's Notes</a>
+        <a href="{{ url_for('activities_page') }}">📅 Planting Calendar</a>
+        <a href="{{ url_for('crops') }}">🌽 Crop Guide</a>
+        <a href="{{ url_for('logout') }}">🚪 Log out ({{ current_username }})</a>
+    </nav>
+
+    <div class="container">
+
+        <h1>🌱 Farming Reminders</h1>
+
+        <p>
+            Keep track of your upcoming crop planting activities.
+        </p>
+
+       <div class="reminder-card">
+    <h3>🌾 Upcoming Activities</h3>
+
+    {% if calendar_list %}
+    <div class="calendar-list">
+        <strong>My Calendars:</strong>
+        {% for cal in calendar_list %}
+            <a href="{{ url_for('select_calendar', calendar_id=cal.calendar_id) }}"
+               class="{% if cal.calendar_id == current_calendar %}active{% endif %}">
+                {{ cal.crop }} ({{ cal.planting_date }})
+            </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if activities %}
+
+        <p><strong>Crop:</strong> {{ crop }}</p>
+        <p><strong>Planting Date:</strong> {{ planting_date }}</p>
+        <form method="POST"
+              action="{{ url_for('delete_calendar', calendar_id=current_calendar) }}"
+              onsubmit="return confirm('Delete this calendar and all its activities?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+           <button type="submit" class="delete-btn">🗑️ Delete this calendar</button>
+        </form>
+
+        <div class="summary">
+            <span>⚠️ Overdue: {{ counts.overdue }}</span>
+            <span>📌 Today: {{ counts.today }}</span>
+            <span>🕒 Upcoming: {{ counts.upcoming }}</span>
+            <span>✅ Done: {{ counts.done }}</span>
+        </div>
+    
+        <p><strong>Progress:</strong> {{ progress }}% complete</p>
+    <div class="progress">
+        <div class="progress-bar"
+             role="progressbar"
+             aria-valuemin="0"
+             aria-valuemax="100"
+             aria-valuenow="{{ progress }}"
+             style="width: {{ progress }}%;"></div>
+    </div>
+
+        <table>
+            ...
+        <form method="POST" action="{{ url_for('add_activity') }}" class="add-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="text" name="name" placeholder="e.g. Buy fertilizer" required>
+            <input type="date" name="date" required>
+            <button type="submit">➕ Add activity</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr></tr>
+                    <th>Activity</th>
+                    <th>Scheduled Date</th>
+                    <th>Days After Planting</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for activity in activities %}
+                  <tr class="{{ activity.status }}">
+                      <td>{{ activity.name }}</td>
+                      <td>{{ activity.date }}</td>
+                      <td>{{ activity.days_after_planting }}</td>
+                      <td>
+                          {% if activity.status == "done" %}
+                           ✅ Done
+                            <form method="POST" action="{{ url_for('undo_activity', activity_id=activity.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit">↩️ Undo</button>
+                            </form> 
+                          {% else %}
+                              {% if activity.status == "overdue" %}⚠️ Overdue{% elif activity.status == "today" %}📌 Today{% else %}🕒 Upcoming{% endif %}
+                              <form method="POST" action="{{ url_for('complete_activity', activity_id=activity.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                  <button type="submit">Mark done</button>
+                              </form>
+                          {% endif %}
+                     </td>
+                     <td>
+                         <form method="POST"
+                               action="{{ url_for('delete_activity', activity_id=activity.id) }}"
+                               onsubmit="return confirm('Delete this activity?');">
+                               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="delete-btn">🗑️</button>
+                         </form>
+                     </td>
+                  </tr>
+                {% endfor %}
+            </tbody>
+      </table>
+
+    {% else %}
+
+        <p>
+            No activities scheduled yet. Please generate a planting
+            calendar first.
+        </p>
+
+    {% endif %}
+</div> 
+
+        <br>
+
+        <a href="/">← Back to Dashboard</a>
+
+    </div>
+
+</body>
+</html>

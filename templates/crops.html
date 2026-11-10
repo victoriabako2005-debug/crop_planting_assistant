@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Guide</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <nav class="main-nav">
+        <a href="/">🏠 Home</a>
+        <a href="{{ url_for('activities_page') }}">📅 Planting Calendar</a>
+        <a href="{{ url_for('reminders') }}">⏰ Reminders</a>
+        <a href="{{ url_for('notes') }}">📝 Farmer's Notes</a>
+        <a href="{{ url_for('crops') }}" class="active">🌽 Crop Guide</a>
+        <a href="{{ url_for('logout') }}">🚪 Log out ({{ current_username }})</a>
+    </nav>
+
+    <div class="reminder-card">
+        <h3>🌽 Crop Guide</h3>
+        <p>Best planting times and harvest periods for common crops.</p>
+
+        {% for name, info in guide.items() %}
+        <div class="crop-item">
+            <h4>{{ name }}</h4>
+            <p><strong>Best planting months:</strong> {{ info.months }}</p>
+            <p><strong>Time to harvest:</strong> {{ info.harvest }}</p>
+            <p><strong>Tip:</strong> {{ info.tip }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
