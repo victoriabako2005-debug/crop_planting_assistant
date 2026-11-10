@@ -686,4 +686,4 @@ def bad_request(e):
     return render_template("404.html", message="That form could not be submitted safely (security token missing or expired). Please go back, refresh the page, and try again."), 400
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
